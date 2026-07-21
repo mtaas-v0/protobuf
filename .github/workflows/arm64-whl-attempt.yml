@@ -36,7 +36,7 @@ jobs:
 
           :: Build the binary wheel using Bazel pointing to target architecture
           
-          bazel build -c opt --cpu=arm64 --compiler=msvc-cl //python/dist:binary_wheel --incompatible_use_python_toolchains=true --verbose_failures --sandbox_debug --subcommands
+          bazel --batch build -c opt --cpu=arm64 --compiler=msvc-cl //python/dist:binary_wheel --incompatible_use_python_toolchains=true --verbose_failures --sandbox_debug --subcommands
 
           bazel cquery //python/dist:binary_wheel --output=files
 

@@ -33,13 +33,13 @@ jobs:
         run: |
           :: Set MSVC environment variables for cross-compiling x64 -> ARM64
           :: call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars.bat"
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat"
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat"  x86_amd64
 
           ::amd64_arm64
 
           :: Build the binary wheel using Bazel pointing to target architecture
-          
-          bazel --batch build -c opt --cpu=arm64 --compiler=msvc-cl //python/dist:binary_wheel --incompatible_use_python_toolchains=true --verbose_failures --sandbox_debug --subcommands
+          bazel cquery //python:_message_binary --output=starlark --expr="providers(target)"
+          bazel --batch build -c opt --cpu=arm64 --compiler=msvc-cl //python/dist:binary_wheel --incompatible_use_python_toolchains=true  --announcement_rc  --logging=6  --verbose_failures --sandbox_debug --subcommands
 
           bazel cquery //python/dist:binary_wheel --output=files
 

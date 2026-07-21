@@ -6,7 +6,7 @@ on:
 jobs:
   build_arm64_wheel:
     name: Build Python 3.14 ARM64 Wheel
-    runs-on: windows-11-arm
+    runs-on: windows-2022
 
     steps:
       - name: Checkout Protobuf Repo
@@ -32,7 +32,10 @@ jobs:
         shell: cmd
         run: |
           :: Set MSVC environment variables for cross-compiling x64 -> ARM64
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"
+          :: call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars.bat"
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat"
+
+          ::amd64_arm64
 
           :: Build the binary wheel using Bazel pointing to target architecture
           

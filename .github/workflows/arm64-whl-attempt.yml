@@ -1,0 +1,43 @@
+name: Build Protobuf Windows ARM64 Wheel (Bazel)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_arm64_wheel:
+    name: Build Python 3.14 ARM64 Wheel
+    runs-on: windows-11-arm
+
+    steps:
+      - name: Checkout Protobuf Repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          
+      - name: Setup Bazel
+        uses: bazel-contrib/setup-bazel@v0.13.0
+        with:
+          # Automatically manages your .bazeliskrc / bazel version
+          bazelisk-version: '1.x'
+
+      - name: Build Wheel with Bazel Cross-Compilation
+        shell: cmd
+        run: |
+          :: Set MSVC environment variables for cross-compiling x64 -> ARM64
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"
+
+          :: Build the binary wheel using Bazel pointing to target architecture
+          bazel build -c opt --cpu=arm64 --compiler=msvc-cl //python/dist:binary_wheel
+
+          bazel cquery //python/dist:binary_wheel --output=files
+
+      - name: Upload Generated Wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: protobuf-windows-arm64-wheel
+          path: bazel-bin/python/dist/*.whl
